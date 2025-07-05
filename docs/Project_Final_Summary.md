@@ -1,30 +1,34 @@
-# Stream-Omni AI语音助手项目完成总结
+# Stream-Talk AI语音助手项目完成总结
 
 ## 🎯 项目概述
 
-基于TEN框架 + Fish Speech + LM Studio + Qwen3-30B-A3模型，成功构建了一个完整的AI语音助手系统，实现了真正的实时语音交互体验。
+基于TEN框架 + Spark-TTS + LM Studio + Qwen2.5系列模型，成功构建了一个完整的AI语音助手系统，实现了真正的实时语音交互体验。专为Apple Silicon优化，提供自然流畅的语音对话。
 
 ## ✅ 完成的核心任务
 
-### 1. 清理过时文件和不再使用的模型 ✅
-- **删除内容**：
-  - 完整删除llava相关文件和目录
-  - 清理playground、scripts等旧版代码
-  - 移除CosyVoice相关文件（已不再使用）
-  - 清理__pycache__、uploads等临时文件
-- **保留内容**：
-  - 核心stream_omni模块（已优化）
-  - TEN框架扩展
-  - Fish Speech TTS系统
-  - Vue3前端界面
+### 1. 技术栈升级和优化 ✅
+- **TTS引擎升级**：
+  - 从Fish Speech迁移到Spark-TTS (MLX优化)
+  - 实现真正的流式音频生成
+  - 首帧延迟优化到<0.4s
+  - 实时率提升到0.44x-0.97x
+- **ASR引擎优化**：
+  - 升级到faster-whisper large-v3-turbo
+  - int8量化，提升推理速度
+  - 优化中文语音识别准确率
+- **项目重构**：
+  - 项目重命名为Stream-Talk
+  - 清理无用测试文件和临时代码
+  - 统一第三方库路径管理
+  - 完整的文档更新
 
-### 2. 连接真实LLM服务 ✅
+### 2. LLM服务集成优化 ✅
 - **LM Studio集成**：
   - 实现与LM Studio的HTTP API连接
-  - 支持Qwen3-30B-A3模型调用
+  - 支持Qwen2.5-7B/14B模型调用
   - 实现流式响应处理
 - **思考内容过滤**：
-  - 智能过滤`<think>`标签内的思考过程
+  - 智能过滤`</think>`标签内的思考过程
   - 只输出实际回复内容给TTS
   - 保持对话的自然流畅性
 - **流式处理**：

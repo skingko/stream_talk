@@ -1,17 +1,20 @@
-# 🎙️ Stream-Omni 智能语音对话系统
+# 🎙️ Stream-Talk 智能语音对话系统
 
 ## 🌟 系统概述
 
-Stream-Omni智能语音对话系统是一个基于TEN框架的下一代语音交互平台，实现了真正的**无手工点击**、**自然对话流**的语音交互体验。
+Stream-Talk智能语音对话系统是一个基于TEN框架的下一代语音交互平台，实现了真正的**无手工点击**、**自然对话流**的语音交互体验。专为Apple Silicon优化，提供流畅的实时语音对话。
 
 ### 🎯 核心特性
 
 - **🔊 语音唤醒 (VAD)**: 基于TEN VAD的低延迟语音活动检测
 - **🔄 说话人轮换检测**: 智能判断finished/wait/unfinished状态
 - **⚡ 实时中断**: 300ms内检测到用户语音即可中断AI回复
-- **🎵 Fish Speech TTS**: RTF < 1.0的实时语音合成
+- **🎵 Spark-TTS**: MLX优化的实时语音合成，<0.4s首帧延迟
+- **🎯 faster-whisper**: large-v3-turbo模型，int8量化优化
 - **🧠 长期监听**: 持续监听，无需手动激活
 - **🌊 全双工通信**: 真正的双向实时语音交互
+- **🔇 回音抑制**: 智能说话人识别，防止AI语音干扰
+- **🍎 macOS优化**: 完整支持Apple Silicon和MPS加速
 
 ## 🏗️ 系统架构
 
@@ -19,62 +22,77 @@ Stream-Omni智能语音对话系统是一个基于TEN框架的下一代语音交
 graph TB
     A[Vue3 前端界面] --> B[WebSocket连接]
     B --> C[语音对话管理器]
-    
+
     C --> D[TEN VAD扩展]
     C --> E[TEN Turn Detection扩展]
-    C --> F[Fish Speech TTS扩展]
+    C --> F[Spark-TTS包装器]
     C --> G[对话管理器扩展]
-    
+
     D --> H[语音活动检测]
     E --> I[轮换状态判断]
     F --> J[实时语音合成]
     G --> K[中断处理]
-    
+
     H --> L[音频流处理]
-    I --> M[ASR结果分析]
-    J --> N[Fish Speech引擎]
+    I --> M[faster-whisper ASR]
+    J --> N[Spark-TTS MLX引擎]
     K --> O[状态机管理]
+
+    M --> P[LM Studio + Qwen]
+    P --> F
+    N --> Q[MPS GPU加速]
 ```
 
 ## 🚀 快速开始
 
-### 方式一：一键启动（推荐）
+### 环境准备
 
 ```bash
-# 自动检查依赖并启动完整系统
-python quick_start.py
-```
+# 1. 创建conda环境
+conda create -n stream_omni python=3.11
+conda activate stream_omni
 
-### 方式二：完整启动
+# 2. 安装Python依赖
+pip install -r requirements.txt
 
-```bash
-# 1. 安装Python依赖
-pip install websockets numpy asyncio
-
-# 2. 安装前端依赖
+# 3. 安装前端依赖
 cd frontend
 npm install
 cd ..
-
-# 3. 启动完整系统
-python start_voice_conversation_system.py
 ```
 
-### 方式三：分别启动
+### 方式一：一键启动（推荐）
 
 ```bash
-# 终端1: 启动WebSocket服务
-python voice_conversation_websocket.py
+# 自动启动后端和前端服务
+python start_all.py
+```
+
+### 方式二：分别启动
+
+```bash
+# 终端1: 启动后端服务
+python start_backend.py
 
 # 终端2: 启动前端服务
 cd frontend
 npm run dev
 ```
 
+### LM Studio配置
+
+```bash
+# 1. 下载并安装LM Studio
+# 2. 下载Qwen2.5-7B-Instruct或Qwen2.5-14B-Instruct模型
+# 3. 启动本地服务器，监听端口1234
+```
+
 ### 访问界面
 
 - **前端界面**: http://localhost:5173
-- **WebSocket服务**: ws://localhost:8001
+- **后端API**: http://localhost:8002
+- **WebSocket服务**: ws://localhost:8002/ws/voice
+- **LM Studio**: http://localhost:1234
 
 ## 🎮 使用指南
 
@@ -150,7 +168,8 @@ stateDiagram-v2
 
 ### 1. 真正的实时性能
 
-- **Fish Speech RTF**: 0.54 (vs CosyVoice 4.12)
+- **Spark-TTS首帧延迟**: <0.4s (MLX优化)
+- **实时率**: 0.44x-0.97x
 - **VAD延迟**: < 10ms
 - **中断响应**: < 300ms
 - **端到端延迟**: < 1s
@@ -161,24 +180,36 @@ stateDiagram-v2
 - **智能轮换**: 自动判断说话结束
 - **流畅中断**: 支持自然的对话打断
 - **长期监听**: 持续待机，随时响应
+- **回音抑制**: 智能说话人识别，防止自激
 
 ### 3. 先进的技术栈
 
-- **TTS**: Fish Speech (TTS-Arena2 #1)
+- **TTS**: Spark-TTS (MLX优化，Apple Silicon专用)
+- **ASR**: faster-whisper large-v3-turbo (int8量化)
+- **LLM**: LM Studio + Qwen2.5系列
 - **VAD**: TEN VAD (轻量级、低延迟)
 - **Turn Detection**: TEN Turn Detection (高精度)
 - **前端**: Vue3 + Element Plus
 - **通信**: WebSocket实时双向通信
 
+### 4. macOS优化
+
+- **MPS GPU加速**: 完整支持Apple Silicon
+- **MLX框架**: 专为Apple Silicon设计
+- **内存优化**: 持久化模型实例
+- **性能调优**: 针对M1/M2/M3芯片优化
+
 ## 📊 性能对比
 
-| 指标 | 传统方案 | Stream-Omni | 改善 |
+| 指标 | 传统方案 | Stream-Talk | 改善 |
 |------|----------|-------------|------|
-| **TTS RTF** | 4.12 | **0.54** | **87% ↓** |
+| **TTS首帧延迟** | 2-5s | **<0.4s** | **90% ↓** |
+| **实时率** | 1.5-4.0x | **0.44-0.97x** | **75% ↓** |
 | **交互方式** | 手动点击 | **语音唤醒** | **自动化** |
 | **中断支持** | 无 | **< 300ms** | **全新功能** |
+| **回音抑制** | 无 | **智能识别** | **全新功能** |
 | **对话流畅度** | 断续 | **连续自然** | **质的飞跃** |
-| **用户体验** | 机械 | **人性化** | **显著提升** |
+| **Apple Silicon** | 不支持 | **完整优化** | **原生支持** |
 
 ## 🔧 配置选项
 

@@ -1,30 +1,38 @@
-# Stream-Omni 实现总结报告
+# Stream-Talk 实现总结报告
 
 ## 项目概述
 
-本项目成功实现了基于CosyVoice2和TEN框架的实时语音交互系统，包含真正的流式语音合成功能和完整的多模态交互架构。
+本项目成功实现了基于Spark-TTS和TEN框架的实时语音交互系统，包含真正的流式语音合成功能和完整的多模态交互架构。专为Apple Silicon优化，提供自然流畅的语音对话体验。
 
 ## 🎯 主要成就
 
 ### ✅ 已完成功能
 
-1. **真正的流式语音合成**
-   - 实现了CosyVoice2的`inference_sft(stream=True)`流式推理
-   - 支持边生成边输出，不再是模拟流式
-   - 支持MPS GPU加速（Apple Silicon）
-   - 提供多种性能模式：fast/balanced/quality
+1. **Spark-TTS流式语音合成**
+   - 实现了MLX优化的Spark-TTS流式推理
+   - 支持边生成边播放，真正的实时音频流
+   - 完整支持MPS GPU加速（Apple Silicon）
+   - 细粒度断句分割（3个断句为一组）
+   - 首帧延迟<0.4s，实时率0.44x-0.97x
 
-2. **Faster-Whisper语音识别**
+2. **faster-whisper语音识别**
    - 集成whisper-large-v3-turbo模型
+   - int8量化优化，提升推理速度
    - 支持中文语音识别优化
-   - 添加了缺失的`transcribe_file`和`transcribe_bytes`方法
+   - beam_size=5的高质量转录
    - 支持流式音频处理
 
 3. **TEN框架集成**
    - 创建了完整的TEN扩展架构
-   - 实现了CosyVoice和Faster-Whisper的TEN兼容包装器
+   - 实现了Spark-TTS和faster-whisper的TEN兼容包装器
    - 支持异步消息传递和数据流处理
    - 提供了统一的应用程序接口
+
+4. **智能回音抑制**
+   - 时间窗口回音抑制机制
+   - 智能说话人识别
+   - 防止AI语音被误识别为用户输入
+   - 自动状态管理和恢复
 
 4. **性能优化**
    - CPU特定优化：减少缓存长度、优化overlap参数
