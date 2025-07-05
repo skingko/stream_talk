@@ -26,9 +26,11 @@ streem-omni/
 │       └── whisper/                    # Whisper语音识别模型
 │
 ├── 🔧 TEN框架组件
-│   ├── ten-framework/                  # TEN框架核心
-│   ├── ten-vad/                        # VAD语音活动检测
-│   ├── ten-turn-detection/             # Turn Detection轮次检测
+│   ├── third-party/                    # 第三方项目
+│   │   ├── ten-framework/              # TEN框架核心
+│   │   ├── ten-vad/                    # VAD语音活动检测
+│   │   ├── ten-turn-detection/         # Turn Detection轮次检测
+│   │   └── fish-speech/                # Fish Speech项目
 │   └── extensions/                     # TEN扩展组件
 │       ├── conversation_manager/       # 对话管理
 │       ├── fish_speech_tts/           # Fish Speech TTS扩展

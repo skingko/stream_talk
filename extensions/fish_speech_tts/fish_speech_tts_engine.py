@@ -13,10 +13,21 @@ from typing import Optional, Dict, Any, AsyncGenerator
 import numpy as np
 import torch
 
-# 添加fish-speech到Python路径
-fish_speech_path = Path(__file__).parent.parent.parent / "fish-speech"
-if fish_speech_path.exists():
-    sys.path.insert(0, str(fish_speech_path))
+# 添加项目根目录到Python路径，以便导入third_party_paths
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+# 导入第三方库路径配置
+try:
+    from third_party_paths import get_fish_speech_path
+    fish_speech_path = get_fish_speech_path()
+    if fish_speech_path.exists():
+        sys.path.insert(0, str(fish_speech_path))
+except ImportError:
+    # 备用方案：直接使用路径
+    fish_speech_path = project_root / "third-party" / "fish-speech"
+    if fish_speech_path.exists():
+        sys.path.insert(0, str(fish_speech_path))
 
 logger = logging.getLogger(__name__)
 
